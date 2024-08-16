@@ -1,23 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import UserList from './components/UserList';
+import UserForm from './components/UserForm';
+import axios from 'axios';
 
 function App() {
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const refreshUsers = () => {
+    setSelectedUser(null);
+  };
+
+  const selectUser = (user) => {
+    setSelectedUser(user);
+  };
+
+  const deleteUser = (userId) => {
+    axios.delete(`https://jsonplaceholder.typicode.com/users/${userId}`)
+      .then(refreshUsers)
+      .catch(error => console.error('There was an error deleting the user!', error));
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <UserForm selectedUser={selectedUser} refreshUsers={refreshUsers} />
+      <UserList selectUser={selectUser} deleteUser={deleteUser} />
     </div>
   );
 }
